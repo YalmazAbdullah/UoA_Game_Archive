@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import datetime
 from pathlib import Path
-from json import dumps
+from json import dumps,loads
 
 VALID_COURSES = [
     "CMPUT250",
@@ -85,6 +85,7 @@ class Game:
                 link = input("link: ")
                 if not link:
                     raise ValueError("No link entered.")
+                # TODO: ping test links
                 # put in list
                 releases[platform] = link
                 # check if user wants to add more
@@ -125,6 +126,17 @@ class Game:
         self._blurb = result[4]
         self._thumbnail = result[5]
         self._releases = result[6]
+
+    def to_json(self):
+        return {
+            "id":self._id,
+            "name":self._name,
+            "course":self._course,
+            "year":self._year,
+            "blurb":self._blurb,
+            "thumbnail":self._thumbnail,
+            "releases":loads(self._releases)
+        }
     
     def __repr__(self): 
         return (f'ID:{self._id:<14} NAME:{self._name}\n'

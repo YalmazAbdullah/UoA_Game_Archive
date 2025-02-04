@@ -112,13 +112,13 @@ def main():
     commands.add_argument('-m','--modify',  action = 'store_true', help = 'modify an existing game.')
     commands.add_argument('-r','--remove',  action = 'store_true', help = 'remove an existing game.')
     commands.add_argument('-ac','--add_csv',action = 'store_const', help = 'add new games from csv file.')
-    commands.add_argument('-b','--backup',  action = 'store_true', help = 'backup the archive. It will be stored in ./database/backups/')
+    commands.add_argument('-b','--backup',  action = 'store_true', help = 'backup the archive. It will be stored in ./backend/backups/')
 
     # take in and parse arguments
     args = parser.parse_args()
 
     # connect to databse
-    con = sqlite3.connect("./database/archive.db")
+    con = sqlite3.connect("./backend/archive.db")
     cursor = con.cursor()
 
     if(args.add == True):
@@ -131,7 +131,7 @@ def main():
         remove(cursor)
     if(args.backup == True):
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        backup_con = sqlite3.connect(f"./database/backups/backups_{timestamp}.db")
+        backup_con = sqlite3.connect(f"./backend/backups/backups_{timestamp}.db")
         con.backup(backup_con)
         backup_con.close()
 
