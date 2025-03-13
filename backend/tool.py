@@ -2,6 +2,8 @@ import argparse
 import sqlite3
 from datetime import datetime
 from game import Game
+import csv
+from json import loads
 
 def search_id(cursor:sqlite3.Cursor):
     # build and query
@@ -41,7 +43,7 @@ def search(cursor:sqlite3.Cursor):
         elif (choice == "NAME"):
             result = search_name(cursor)
         else:
-            print("Invalid choice.")
+            print("❌ Error: Invalid choice.")
             continue
         if result == None:
             print("No matches found")
@@ -59,7 +61,7 @@ def modify(cursor:sqlite3.Cursor):
     while True:
         target = input(f"Options are:{options}\nEnter field to edit: ").strip().lower()
         if target not in options:
-            print("Invalid choice.")
+            print("❌ Error: Invalid choice.")
             continue
         else:
             game.mod_functions[target]()
@@ -76,7 +78,7 @@ def remove(cursor:sqlite3.Cursor):
             print("No matches found")
             continue
         game.remove_from_db(cursor)
-        print("Removed the above!")
+        print("✅ Game Removed.")
         cont = input("Remove another Y/N? ").strip().upper()
         if cont != "Y":
             break
@@ -89,6 +91,46 @@ def add_single(cursor:sqlite3.Cursor):
         cont = input("Add another game Y/N? ").strip().upper()
         if cont != "Y":
             break
+
+def add_many(con:sqlite3.Connection,cursor:sqlite3.Cursor, path):
+    try:
+        with open(path, newline='', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            
+            for row in reader:
+                game = Game()
+
+                # Attempt to create instance
+                try:
+                    game.set_name(row["name"])
+                    game.set_course(row["course"])
+                    game.set_year(int(row["year"]))  # Convert year to integer
+                    game.set_blurb(row["blurb"])
+                    game.set_thumbnail(row["thumbnail"])
+                    game.set_releases(loads(row["releases"].replace("'", '"')))  
+                except Exception as e:
+                    print(f"❌ Error parsing releases for {row['name']}")
+                    print(f"---->{e}")
+                    break
+                
+                # Attempt to write in db
+                try:
+                    game.add_to_db(cursor)
+                except Exception as e:
+                    print(f"❌ Error: Failed to add {row["name"]} to database.")
+                    print(f"---->❌ Error: {e}")
+                    print("Please resolve issues before retrying.")
+                    con.rollback
+                    break
+
+                # Add to the list
+                print(f"✅ {row['name']} processed.")
+
+    except FileNotFoundError:
+        print(f"❌ Error: CSV file '{path}' not found.")
+        return
+    
+    return
 
 class NoRepeatAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
@@ -111,18 +153,20 @@ def main():
     commands.add_argument('-s','--search',  action = 'store_true', help = 'search game IDs with provided string in name.')
     commands.add_argument('-m','--modify',  action = 'store_true', help = 'modify an existing game.')
     commands.add_argument('-r','--remove',  action = 'store_true', help = 'remove an existing game.')
-    commands.add_argument('-ac','--add_csv',action = 'store_const', help = 'add new games from csv file.')
-    commands.add_argument('-b','--backup',  action = 'store_true', help = 'backup the archive. It will be stored in ./backend/backups/')
+    commands.add_argument('-b','--backup',  action = 'store_true', help = 'backup the archive. It will be stored in ./backups/')
+    commands.add_argument('-am', '--add-many', type=str, metavar="CSV_PATH", help='add multiple games from a CSV file.')
 
     # take in and parse arguments
     args = parser.parse_args()
 
     # connect to databse
-    con = sqlite3.connect("./backend/archive.db")
+    con = sqlite3.connect("./archive.db")
     cursor = con.cursor()
 
     if(args.add == True):
         add_single(cursor)
+    if args.add_many:
+        add_many(con, cursor, args.add_many)
     if(args.search == True):
         search(cursor)
     if(args.modify == True):
@@ -131,7 +175,7 @@ def main():
         remove(cursor)
     if(args.backup == True):
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        backup_con = sqlite3.connect(f"./backend/backups/backups_{timestamp}.db")
+        backup_con = sqlite3.connect(f"./backups/backup_{timestamp}.db")
         con.backup(backup_con)
         backup_con.close()
 

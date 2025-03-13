@@ -2,12 +2,16 @@ import sqlite3
 from datetime import datetime
 from pathlib import Path
 from json import dumps,loads
+from utlis import VALID_COURSES
+import urllib.request
 
-VALID_COURSES = [
-    "CMPUT250",
-    "INTD450",
-]
-
+def check_url(url: str):
+    with urllib.request.urlopen(url) as response:
+        if response.status == 200:
+            return True
+        else:
+            return False
+        
 class Game:
     def __init__(self):
         self._id: int
@@ -38,17 +42,21 @@ class Game:
         else: course_name.strip()
         course_name = course_name.upper()
         course_name = course_name.replace(" ","")
+        course_name = course_name.replace("-","")
         if (course_name not in VALID_COURSES):
-            raise ValueError(f'Invalid course code: {course_name}. Valid options are: {VALID_COURSES}')
+            raise ValueError(f'❌ Error: Invalid course code: {course_name}. Valid options are: {VALID_COURSES}')
         self._course =  course_name
 
     def set_year(self, year:int = None):
         if year == None:
             year = input("Year: ").strip()
-        if year and year.isdigit():
-            year = int(year)
+            if year.isdigit():
+                year = int(year)
+            else:
+                raise ValueError(f'❌ Error: Invalid year. Not a digit')
+        if year:
             if int(year) <2000 or int(year) >datetime.now().year:
-                raise ValueError(f'Invalid year: {str(year)}. Must be between 2000 and {str(datetime.now().year)}')
+                raise ValueError(f'❌ Error: Invalid year: {str(year)}. Must be between 2000 and {str(datetime.now().year)}')
         self._year = year
     
     def set_blurb(self, blurb:str = None):
@@ -60,20 +68,23 @@ class Game:
         if file_name == None:
             file_name = input("Name of thubmnail file: ").strip()
         else: file_name.strip()
-        path = "./database/thumbnails/"+file_name
+        path = "./thumbnails/"+file_name
         file = Path(path)
         if not file.exists():
-            raise ValueError(f'Thumbnail file \"{file_name}\" does not exist in '
-                             './database/thumnails/\nCheck if name is correct, '
+            raise ValueError(f'❌ Error: Thumbnail file \"{file_name}\" does not exist in '
+                             './thumnails/\nCheck if name is correct, '
                              'also  check if correct extension is included, ex: WithinVault.png')
         self._thumbnail = path
 
     def set_releases(self, releases:dict = None):
         if releases != None:
             # validate priovided release list
+            for release in releases:
+                if not check_url(releases[release]):
+                    raise ValueError("❌ Error: Link failed ping test.")
             for platform in releases.keys():
                 if not releases[platform]:
-                    raise ValueError(f"No link priovided for {platform}")
+                    raise ValueError(f"❌ Error: No link priovided for {platform}")
         else:
             # manually enter as many as desired
             releases = {}
@@ -81,12 +92,12 @@ class Game:
                 # get info
                 platform = input("platform: ")
                 if not platform:
-                    raise ValueError("No platform entered.")
+                    raise ValueError("❌ Error: No platform entered.")
                 link = input("link: ")
                 if not link:
-                    raise ValueError("No link entered.")
-                # TODO: ping test links
-                # put in list
+                    raise ValueError("❌ Error: No link entered.")
+                if not check_url(link):
+                    raise ValueError("❌ Error: Link failed ping test.")
                 releases[platform] = link
                 # check if user wants to add more
                 cont = input("Add another platform Y/N? ").strip().upper()

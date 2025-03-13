@@ -2,7 +2,7 @@ import sqlite3
 
 def main():
     # Create SQLite database and table
-    conn = sqlite3.connect("./database/archive.db")
+    conn = sqlite3.connect("./archive.db")
     cursor = conn.cursor()
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS games(

@@ -1,0 +1,4 @@
+VALID_COURSES = [
+    "CMPUT250",
+    "INTD450",
+]
