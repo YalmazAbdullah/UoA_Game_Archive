@@ -68,7 +68,7 @@ class Game:
         if file_name == None:
             file_name = input("Name of thubmnail file: ").strip()
         else: file_name.strip()
-        path = "./thumbnails/"+file_name
+        path = file_name
         file = Path(path)
         if not file.exists():
             raise ValueError(f'❌ Error: Thumbnail file \"{file_name}\" does not exist in '
@@ -139,13 +139,14 @@ class Game:
         self._releases = result[6]
 
     def to_json(self):
+        base_url = "http://localhost:8000/"
         return {
             "id":self._id,
             "name":self._name,
             "course":self._course,
             "year":self._year,
             "blurb":self._blurb,
-            "thumbnail":self._thumbnail,
+            "thumbnail":base_url + self._thumbnail,
             "releases":loads(self._releases)
         }
     
