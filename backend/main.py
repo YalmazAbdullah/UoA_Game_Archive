@@ -84,7 +84,7 @@ async def get_games(
 
     # query paginated results
     query += additional+" LIMIT ? OFFSET ?"
-    params.extend([limit, page * limit])
+    params.extend([limit, (page-1) * limit])
     cursor.execute(query, params)
     results = cursor.fetchall()
 

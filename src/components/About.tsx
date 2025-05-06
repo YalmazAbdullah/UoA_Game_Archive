@@ -17,7 +17,7 @@ export function About(){
             <h1 className="text-black font-accent text-6xl">
             About The <span className="text-black font-extrabold"><span className="underline">Archive</span><span className="pl-2">:</span></span>
             </h1>
-            <p className="text-black">
+            <p className="text-black mt-5">
                 Welcome to the UA Games Archive—a showcase of the creative and 
                 technical achievements of students from the University of 
                 Alberta's Games programs. These programs, offered collaboratively 
