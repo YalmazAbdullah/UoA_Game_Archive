@@ -51,7 +51,7 @@ async def get_filters():
     cursor.execute("SELECT * FROM games ORDER BY RANDOM() LIMIT 1;")
     result = cursor.fetchone()
     game = Game()
-    game.build_from_query_result(result)
+    game.populate_from_query_result(result)
     return game
 
 # GET all results from DB with pagination
@@ -90,9 +90,9 @@ async def get_games(
 
     # construct response and erturn
     games = []
-    for reult in results:
+    for result in results:
         game = Game()
-        game.build_from_query_result(reult)
+        game.populate_from_query_result(result)
         games.append(game.to_json()) 
         
     return {

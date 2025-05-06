@@ -7,6 +7,7 @@ images: 920x340
 blurb under 500 ideall 250
 title under 50
 sample csv
+release keys can be itch, steam, github, other
 
 ## Creating a new Entery:
 

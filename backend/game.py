@@ -216,6 +216,7 @@ class Game:
         self.set_name()
         self.set_course()
         self.set_year()
+        self.set_team()
         self.set_blurb()
         self.set_thumbnail()
         self.set_releases()
@@ -229,7 +230,7 @@ class Game:
         ----------
         cursor (sqlite3.Cursor): Write position for the database.
         '''
-        sql = "INSERT INTO games(name, course, year, team, blurb, thumbnail, releases) VALUES(?,?,?,?,?,?,?)"
+        sql = "INSERT OR REPLACE INTO games(name, course, year, team, blurb, thumbnail, releases) VALUES(?,?,?,?,?,?,?)"
         cursor.execute(sql, (
             self._name, self._course, self._year, dumps(self._team), self._blurb, self._thumbnail, dumps(self._releases)
         ))
@@ -244,7 +245,7 @@ class Game:
         '''
         sql = "UPDATE games SET name = ?, course = ?, year = ?, blurb = ?, thumbnail = ?, releases = ? WHERE id = ?"
         cursor.execute(sql, (
-            self._name, self._course, self._year, self._blurb, self._thumbnail, dumps(self._releases), self._id
+            self._name, self._course, self._year, dumps(self._team), self._blurb, self._thumbnail, dumps(self._releases), self._id
         ))
 
     def remove_from_db(self, cursor:sqlite3.Cursor):
@@ -270,7 +271,7 @@ class Game:
         self._name = result[1]
         self._course = result[2]
         self._year = result[3]
-        self._releases = result[4]
+        self._team = result[4]
         self._blurb = result[5]
         self._thumbnail = result[6]
         self._releases = result[7]
@@ -291,8 +292,8 @@ class Game:
             "name":self._name,
             "course":self._course,
             "year":self._year,
-            "year":self._team,
+            "team":loads(self._team),
             "blurb":self._blurb,
-            "thumbnail":api_url + self._thumbnail,
+            "thumbnail":api_url + "/" + self._thumbnail,
             "releases":loads(self._releases)
         }

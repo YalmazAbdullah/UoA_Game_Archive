@@ -6,8 +6,9 @@ export interface GameType {
   name: string;
   course: string;
   year: number;
+  team: Record<string, string>;
   blurb: string;
   thumbnail: string;
-  releases: { steam?: string };
+  releases: Record<string, string>;
 }
   
