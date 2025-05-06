@@ -5,7 +5,23 @@ from game import Game
 import csv
 from json import loads
 
+class NoRepeatAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        if getattr(namespace, self.dest, None) is not None:
+            parser.error(f"Argument {option_string} cannot be repeated.")
+        setattr(namespace, self.dest, values)
+
+################################
+#            SEARCH            #
+################################
 def search_id(cursor:sqlite3.Cursor):
+    '''
+    Search the database using ID.
+
+    Parameters:
+    ----------
+    cursor (sqlite3.Cursor): Write position for the database.
+    '''
     # build and query
     id = input("Enter ID: ")
     cursor.execute("SELECT * FROM games WHERE id = ?", (id,))
@@ -14,11 +30,18 @@ def search_id(cursor:sqlite3.Cursor):
     if result == None:
         return None
     game = Game()
-    game.build_from_query_result(result)
+    game.populate_from_query_result(result)
     print(game)
     return game
 
 def search_name(cursor:sqlite3.Cursor):
+    '''
+    Search the database using Name.
+
+    Parameters:
+    ----------
+    cursor (sqlite3.Cursor): Write position for the database.
+    '''
     # build and query
     name = input("Enter name: ")
     cursor.execute("SELECT * FROM games WHERE name LIKE ?", ('%'+name+'%',))
@@ -28,13 +51,19 @@ def search_name(cursor:sqlite3.Cursor):
         return None
     game = Game()
     for i in range(len(results)):
-        game.build_from_query_result(results[i])
+        game.populate_from_query_result(results[i])
         results[i] = game
         print(results[i])
     return results
 
 def search(cursor:sqlite3.Cursor):
-    # build and query
+    '''
+    Generic search function that warps around Name and ID search.
+
+    Parameters:
+    ----------
+    cursor (sqlite3.Cursor): Write position for the database.
+    '''
     while True:
         choice = input("Search by ID or NAME? ").strip().upper()
         result = None
@@ -43,47 +72,24 @@ def search(cursor:sqlite3.Cursor):
         elif (choice == "NAME"):
             result = search_name(cursor)
         else:
-            print("❌ Error: Invalid choice.")
+            print("Error: Invalid choice.")
             continue
         if result == None:
-            print("No matches found")
+            print("Error: No matches found")
             continue
         break
 
-def modify(cursor:sqlite3.Cursor):
-    while True:
-        game:Game = search_id(cursor)
-        if game == None:
-            print("No matches found")
-            continue
-        break
-    options = list(game.mod_functions.keys())
-    while True:
-        target = input(f"Options are:{options}\nEnter field to edit: ").strip().lower()
-        if target not in options:
-            print("❌ Error: Invalid choice.")
-            continue
-        else:
-            game.mod_functions[target]()
-        cont = input("Make another change Y/N? ").strip().upper()
-        if cont != "Y":
-            break
-    print(game)
-    game.mod_in_db(cursor)
-
-def remove(cursor:sqlite3.Cursor):
-    while True:
-        game:Game = search_id(cursor)
-        if game == None:
-            print("No matches found")
-            continue
-        game.remove_from_db(cursor)
-        print("✅ Game Removed.")
-        cont = input("Remove another Y/N? ").strip().upper()
-        if cont != "Y":
-            break
-        
+################################
+#             ADD              #
+################################
 def add_single(cursor:sqlite3.Cursor):
+    '''
+    Add entery manually, one by one.
+
+    Parameters:
+    ----------
+    cursor (sqlite3.Cursor): Write position for the database.
+    '''
     new_entery = Game()
     while True:
         new_entery.populate_all()
@@ -92,24 +98,33 @@ def add_single(cursor:sqlite3.Cursor):
         if cont != "Y":
             break
 
-def add_many(con:sqlite3.Connection,cursor:sqlite3.Cursor, path):
+def add_many(con:sqlite3.Connection, cursor:sqlite3.Cursor, path):
+    '''
+    Add a multiple enteries from a CSV.
+
+    Parameters:
+    ----------
+    con (sqlite3.Connection): Connection with database.
+    cursor (sqlite3.Cursor): Write position for the database.
+    '''
     try:
+        # Read CSV
         with open(path, newline='', encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile)
             
             for row in reader:
-                game = Game()
-
                 # Attempt to create instance
+                game = Game()
                 try:
                     game.set_name(row["name"])
                     game.set_course(row["course"])
-                    game.set_year(int(row["year"]))  # Convert year to integer
+                    game.set_year(int(row["year"]))
+                    game.set_team(loads(row["team"].replace("'", '"')))  
                     game.set_blurb(row["blurb"])
                     game.set_thumbnail(row["thumbnail"])
                     game.set_releases(loads(row["releases"].replace("'", '"')))  
                 except Exception as e:
-                    print(f"❌ Error parsing releases for {row['name']}")
+                    print(f"Error: Failed to parse entry for {row['name']}")
                     print(f"---->{e}")
                     break
                 
@@ -117,30 +132,86 @@ def add_many(con:sqlite3.Connection,cursor:sqlite3.Cursor, path):
                 try:
                     game.add_to_db(cursor)
                 except Exception as e:
-                    print(f"❌ Error: Failed to add {row["name"]} to database.")
-                    print(f"---->❌ Error: {e}")
+                    print(f"Error: Failed to add {row["name"]} to database.")
+                    print(f"---->{e}")
                     print("Please resolve issues before retrying.")
                     con.rollback
                     break
 
-                # Add to the list
-                print(f"✅ {row['name']} processed.")
+                # Add to completed list
+                print(f"✅ Success: {row['name']} processed.")
 
     except FileNotFoundError:
-        print(f"❌ Error: CSV file '{path}' not found.")
+        print(f"Error: CSV file '{path}' not found.")
         return
-    
     return
 
-class NoRepeatAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        if getattr(namespace, self.dest, None) is not None:
-            parser.error(f"Argument {option_string} cannot be repeated.")
-        setattr(namespace, self.dest, values)
+################################
+#            MODIFY            #
+################################
 
-#######################
-# MAIN                #
-#######################
+def modify(cursor:sqlite3.Cursor):
+    '''
+    Modify enteries in database.
+
+    Parameters:
+    ----------
+    cursor (sqlite3.Cursor): Write position for the database.
+    '''
+    # Find game to be modified
+    while True:
+        game:Game = search_id(cursor)
+        if game == None:
+            print("Error: No matches found")
+            continue
+        break
+
+    # List options
+    options = list(game.mod_functions.keys())
+
+    # Select options and entery new value
+    while True:
+        target = input(f"Options are:{options}\nEnter field to edit: ").strip().lower()
+        if target not in options:
+            print("Error: Invalid choice.")
+            continue
+        else:
+            game.mod_functions[target]()
+        cont = input("Make another change Y/N? ").strip().upper()
+        if cont != "Y":
+            break
+
+    # Print updated entery and apply
+    print(game)
+    game.mod_in_db(cursor)
+
+################################
+#            REMOVE            #
+################################
+
+def remove(cursor:sqlite3.Cursor):
+    '''
+    Remove entery from database.
+
+    Parameters:
+    ----------
+    cursor (sqlite3.Cursor): Write position for the database.
+    '''
+    while True:
+        game:Game = search_id(cursor)
+        if game == None:
+            print("Error: No matches found")
+            continue
+        game.remove_from_db(cursor)
+        print("✅ Success: Game Removed.")
+        cont = input("Remove another Y/N? ").strip().upper()
+        if cont != "Y":
+            break
+
+################################
+#             MAIN             #
+################################
+
 def main():
     # set up arguments
     parser = argparse.ArgumentParser(

@@ -10,9 +10,10 @@ def main():
             name TEXT UNIQUE NOT NULL,
             course TEXT NOT NULL,
             year  INT NOT NULL,
-            blurb TEXT UNIQUE NOT NULL,
-            thumbnail TEXT UNIQUE NOT NULL,
-            releases TEXT UNIQUE NOT NULL
+            team TEXT NOT NULL,
+            blurb TEXT NOT NULL,
+            thumbnail TEXT NOT NULL,
+            releases TEXT NOT NULL
         )
     """)
     conn.commit()
