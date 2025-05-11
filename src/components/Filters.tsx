@@ -49,7 +49,7 @@ export function Filter({ filterName, selectedValue = "", onSelect}: FilterProps)
       </SelectTrigger>
 
       {/* Drop down content */}
-      <SelectContent className="bg-white italic font-light text-lg rounded-none border-5 border-black">
+      <SelectContent className="overflow-y-auto bg-white italic font-light text-lg rounded-none border-5 border-black">
         <SelectGroup>
           {items.map((item, index) => (
             <SelectItem className="hover:bg-orange hover:text-black rounded-none" key={index} value={item}>

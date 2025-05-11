@@ -53,19 +53,21 @@ npm run dev
 # Data Specification
 This section outlines the expectations around data when adding a game entery to the database, manually or through csv.
 
-**Name:** Name of games are expected to be **under 25 charachters** if they are to show cleanly on the cards. Otherwise they will get cropped with '...' at the end. It will still show in full inside the modal that appears when a card is clicked.
+- **Name:** Name of games are expected to be **under 25 charachters** if they are to show cleanly on the cards. Otherwise they will get cropped with '...' at the end. It will still show in full inside the modal that appears when a card is clicked.
 
-**Course:** Code of the course this game was made in. Must be one of the game dev cert courses as specified in `backend/utils.py`
+- **Course:** Code of the course this game was made in. Must be one of the game dev cert courses as specified in `backend/utils.py`
 
-**Year:** Can be any year between 2010 and present year.
+- **Year:** Can be any year between 2010 and present year.
 
-**Team:** All team members and their roles. In the csv this is formated as a dictionary where the member's names are the key and role is the value.
+- **Team:** All team members and their roles. In the csv this is formated as a dictionary where the member's names are the key and role is the value.
 
-**Blurb:** A short description of the game. Max 500 charachters long, ideally 250 charachters to fit cleanly in the card.
+- **Blurb:** A short description of the game. Max 500 charachters long, ideally 250 charachters to fit cleanly in the card.
 
-**Thumbnail:** Name of thumbnail file. The actual thumbnail image should have a matching name and be placed in the `backend/thumbnails/` folder. Though images of any size or aspect ratio will work, to avoid stretching or cropping I recommend 920 x 430. Some images are already in the folder for testing purposes.
+- **Thumbnail:** Name of thumbnail file. The actual thumbnail image should have a matching name and be placed in the `backend/thumbnails/` folder. Though images of any size or aspect ratio will work, to avoid stretching or cropping I recommend 920 x 430. Some images are already in the folder for testing purposes.
 
-**Releases:** All the release platforms for the game. In the csv this is formatted as a dictionary with platform name as the key and a link as the value. The links will be validated upon entery to see if they work. A list of valid platforms is available in `backend/utils.py`
+- **Releases:** All the release platforms for the game. In the csv this is formatted as a dictionary with platform name as the key and a link as the value. The links will be validated upon entery to see if they work. A list of valid platforms is available in `backend/utils.py`
+  
+A sample csv file is provided titles `_test.csv` for reference of how the csv file should be structred. 
 
 # CLI Tool Documentation
 The CLI tool is to easily maintain and back up the archive's database. 
