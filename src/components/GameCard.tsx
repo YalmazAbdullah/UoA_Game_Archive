@@ -19,10 +19,8 @@ const icons: Record<string, string> = {
 const platforms: string[] = ["itch", "github", "steam", "other"];
 
 const MAX_BLURB = 450
-const MAX_TITLE = 50
+const MAX_TITLE = 25
 export function GameCard({ name, blurb, thumbnail, releases}: GameType){
-    blurb = "Praesent vitae quam suscipit elit fermentum tempus et at ipsum. Proin a ultricies lectus. Nullam id imperdiet velit, ac aliquam orci. Nulla gravida tristique orci ac bibendum. Fusce mauris quam, faucibus non mi nec, luctus egestas risus. Nulla eget blandit nunc. Praesent lacus urna, tempus sit amet magna non, ultrices congue nisl. Vivamus feugiat convallis ante eu porta. Aenean finibus augue sit amet risus maximus hendrerit. Duis pretium, nibh quis eleifend molestie, urna turpis condimentum purus, a maximus lacus nisl non nulla. Donec ut vestibulum dolor, vel malesuada nunc"
-    
     return (
         <>
         <Card className={`

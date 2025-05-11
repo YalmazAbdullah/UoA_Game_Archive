@@ -90,10 +90,24 @@ function App() {
 
   // Fetch on filter change
   React.useEffect(() => {
-    setGames([]);
-    setPage(1);
-    setHasMore(true);
-    getGames(1);
+    const fetchFiltered = async () => {
+      setIsLoading(true);
+      setHasMore(true);
+      const currentLimit = calculateLimit();
+      try {
+        const res = await axios.get(endpoint_live + "games", {
+          params: { page: 1, limit: currentLimit, year, course },
+        });
+        setGames(res.data.games);
+        setPage(1);
+      } catch (err) {
+        console.error("Error fetching filtered games:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchFiltered();
   }, [year, course]);
   
   // Fetch on resize

@@ -13,17 +13,19 @@ import GameCard from "./GameCard"
 import steamIcon from "@/assets/steam.svg";
 import itchIcon from "@/assets/itch.svg";
 import githubIcon from "@/assets/github.svg";
+import linkIcon from "@/assets/link.svg";
 
 const icons: Record<string, string> = {
   steam: steamIcon,
   itch: itchIcon,
-  github: githubIcon
+  github: githubIcon,
+  other: linkIcon
 };
 const platforms: string[] = ["itch", "github", "steam", "other"];
  
 export function GameModal(game_info: GameType) {
     let blurb = "Praesent vitae quam suscipit elit fermentum tempus et at ipsum. Proin a ultricies lectus. Nullam id imperdiet velit, ac aliquam orci. Nulla gravida tristique orci ac bibendum. Fusce mauris quam, faucibus non mi nec, luctus egestas risus. Nulla eget blandit nunc. Praesent lacus urna, tempus sit amet magna non, ultrices congue nisl. Vivamus feugiat convallis ante eu porta. Aenean finibus augue sit amet risus maximus hendrerit. Duis pretium, nibh quis eleifend molestie, urna turpis condimentum purus, a maximus"
-    
+    let name = "Really long Praesent vitae quam suscipit elit fermentum tempus et at ipsum."
     return (
     <Dialog>
       <DialogTrigger asChild>
@@ -54,7 +56,7 @@ export function GameModal(game_info: GameType) {
             </div>
             <div>
                 <DialogTitle className="text-black font-accent font-extrabold md:text-5xl text-xl">{game_info.name}</DialogTitle>
-                <DialogDescription className="text-black">{blurb}</DialogDescription>
+                <DialogDescription className="text-black">{game_info.blurb}</DialogDescription>
             </div> 
         </div>
         <div className="md:px-5">

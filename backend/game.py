@@ -4,7 +4,7 @@ import urllib.request
 from datetime import datetime
 from pathlib import Path
 from json import dumps,loads
-from utlis import VALID_COURSES
+from utlis import VALID_COURSES, PLATFORMS
 from dotenv import load_dotenv
 
 def check_url(url: str):
@@ -120,7 +120,7 @@ class Game:
                 # create entery
                 team[member] = role
                 # check if user wants to add more
-                cont = input("Add another platform Y/N? ").strip().upper()
+                cont = input("Add another member Y/N? ").strip().upper()
                 if cont != "Y":
                     break
         self._team = team
@@ -175,6 +175,8 @@ class Game:
                 if not check_url(releases[release]):
                     raise ValueError("Error: Link failed ping test.")
             for platform in releases.keys():
+                if platform not in PLATFORMS:
+                    raise ValueError('Error: Invalid platform. Valid platforms are "itch", "github", "steam", "other"')
                 if not releases[platform]:
                     raise ValueError(f"Error: No link priovided for {platform}")
         else:
@@ -185,6 +187,8 @@ class Game:
                 platform = input("platform: ")
                 if not platform:
                     raise ValueError("Error: No platform entered.")
+                if platform not in PLATFORMS:
+                    raise ValueError('Error: Invalid platform. Valid platforms are "itch", "github", "steam", "other"')
                 link = input("link: ")
                 if not link:
                     raise ValueError("Error: No link entered.")
@@ -243,7 +247,7 @@ class Game:
         ----------
         cursor (sqlite3.Cursor): Write position for the database.
         '''
-        sql = "UPDATE games SET name = ?, course = ?, year = ?, blurb = ?, thumbnail = ?, releases = ? WHERE id = ?"
+        sql = "UPDATE games SET name = ?, course = ?, year = ?, team = ?, blurb = ?, thumbnail = ?, releases = ? WHERE id = ?"
         cursor.execute(sql, (
             self._name, self._course, self._year, dumps(self._team), self._blurb, self._thumbnail, dumps(self._releases), self._id
         ))
