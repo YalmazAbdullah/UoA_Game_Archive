@@ -11,7 +11,11 @@ export function Banner(){
             <div className="flex flex-col justify-stretch items-center">
                 <img
                     src={bannerLogo}
-                    className={`z-20 pt-60 -translate-y-50 md:-translate-y-45`}
+                    className={`
+                        z-20 -translate-y-50
+                        pt-60  
+                        md:-translate-y-45 
+                        transition-transform duration-300 hover:scale-105 hover:rotate-3`}
                 />
             </div>
         </div>
