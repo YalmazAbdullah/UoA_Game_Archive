@@ -1,10 +1,14 @@
+/**
+ * Type defnition for Games.
+ */
 export interface GameType {
-    id: number;
-    name: string;
-    course: string;
-    year: number;
-    blurb: string;
-    thumbnail: string;
-    releases: { steam?: string }; // Optional steam link
-  }
+  id: number;
+  name: string;
+  course: string;
+  year: number;
+  team: Record<string, string>;
+  blurb: string;
+  thumbnail: string;
+  releases: Record<string, string>;
+}
   

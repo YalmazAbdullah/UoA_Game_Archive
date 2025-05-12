@@ -34,24 +34,25 @@ export function Filter({ filterName, selectedValue = "", onSelect}: FilterProps)
     getItems();
   }, []);
 
-  // Returns a component that is a drop down with filter values queried from the server.
   return (
     <div>
     <Select value={selectedValue ?? undefined} onValueChange={onSelect}>
       {/* Drop down button */}
-      <SelectTrigger className={`w-[250px] 
-        font-serif italic 
-        text-lg
-        text-white border-2 border-black ${ selectedValue ? "bg-yellow text-black" : "bg-gray hover:bg-green"}`
+      <SelectTrigger className={`
+            w-[100%]
+            border-5 
+            border-black rounded-none 
+            italic font-light text-lg text-white
+            p-5 ${ selectedValue ? "bg-green" : "bg-gray"}`
         }>
         <SelectValue placeholder={"Select a " + filterName} />
       </SelectTrigger>
 
       {/* Drop down content */}
-      <SelectContent className="max-h-[200px] text-lg overflow-y-auto font-serif italic bg-white">
+      <SelectContent className="overflow-y-auto bg-white italic font-light text-lg rounded-none border-5 border-black">
         <SelectGroup>
           {items.map((item, index) => (
-            <SelectItem className="text-lg hover:bg-green hover:text-white" key={index} value={item}>
+            <SelectItem className="hover:bg-orange hover:text-black rounded-none" key={index} value={item}>
               {item}
             </SelectItem>
           ))}
