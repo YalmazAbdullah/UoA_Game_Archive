@@ -48,6 +48,7 @@ if not then install instructions are available [here](https://github.com/nvm-sh/
 
 if they are then use the following command to launch in dev mode on localhost.
 ```
+npm install
 npm run dev
 ```
 # Data Specification
@@ -116,7 +117,10 @@ python tool.py -a //to add
 or 
 python tool.py -m //to modify
 ```
-
+notes:
+- modal not spanning full width 1920p
+- height of cards too big
+- switch team and description position for modal so more words can fit
 
 
 
