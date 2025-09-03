@@ -46,6 +46,11 @@ npm --version
 ```
 if not then install instructions are available [here](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating).
 
+create a `.env ` file to store enviorment variable in root. Paste the following line
+```
+VITE_API_URL = http://localhost:8000
+```
+
 if they are then use the following command to launch in dev mode on localhost.
 ```
 npm install
