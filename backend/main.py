@@ -1,3 +1,4 @@
+import os
 import sqlite3
 from fastapi import FastAPI, Query, HTTPException
 from fastapi.staticfiles import StaticFiles
@@ -12,7 +13,8 @@ from typing import Optional
 ################################
 
 app = FastAPI()
-app.mount("/thumbnails", StaticFiles(directory="thumbnails"), name="thumbnails")
+thumbnails_path = os.path.join(os.getcwd(), "thumbnails")
+app.mount("/thumbnails", StaticFiles(directory=thumbnails_path), name="thumbnails")
 
 origins = [
     "*"

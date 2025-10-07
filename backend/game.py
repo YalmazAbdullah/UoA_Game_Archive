@@ -288,9 +288,8 @@ class Game:
         ----------
         cursor: Write position for the database.
         '''
-        env_path = Path('..') / '.env'
-        load_dotenv(env_path)
-        api_url = os.getenv('VITE_API_URL')
+        api_url = os.getenv('VITE_API_URL', '')
+        print(api_url)
         return {
             "id":self._id,
             "name":self._name,
@@ -298,6 +297,6 @@ class Game:
             "year":self._year,
             "team":loads(self._team),
             "blurb":self._blurb,
-            "thumbnail":api_url + "/" + self._thumbnail,
+            "thumbnail":f"{api_url}/{self._thumbnail}",
             "releases":loads(self._releases)
         }

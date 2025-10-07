@@ -1,9 +1,7 @@
-import * as React from "react"
 import { GameType } from "@/types/gameType"
 import {
     Card,
     CardContent,
-    CardFooter,
 } from "@/components/ui/card"
 import steamIcon from "@/assets/steam.svg";
 import itchIcon from "@/assets/itch.svg";

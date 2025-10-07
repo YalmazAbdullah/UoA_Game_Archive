@@ -6,6 +6,7 @@ services:
       - "3000:3000"
     environment:
       - PYTHONUNBUFFERED=1
+      - VITE_API_URL=http://localhost
     restart: always
 
   frontend:

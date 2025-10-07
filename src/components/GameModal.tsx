@@ -1,10 +1,7 @@
-import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
@@ -24,8 +21,6 @@ const icons: Record<string, string> = {
 const platforms: string[] = ["itch", "github", "steam", "other"];
  
 export function GameModal(game_info: GameType) {
-    let blurb = "Praesent vitae quam suscipit elit fermentum tempus et at ipsum. Proin a ultricies lectus. Nullam id imperdiet velit, ac aliquam orci. Nulla gravida tristique orci ac bibendum. Fusce mauris quam, faucibus non mi nec, luctus egestas risus. Nulla eget blandit nunc. Praesent lacus urna, tempus sit amet magna non, ultrices congue nisl. Vivamus feugiat convallis ante eu porta. Aenean finibus augue sit amet risus maximus hendrerit. Duis pretium, nibh quis eleifend molestie, urna turpis condimentum purus, a maximus"
-    let name = "Really long Praesent vitae quam suscipit elit fermentum tempus et at ipsum."
     return (
     <Dialog>
       <DialogTrigger asChild>

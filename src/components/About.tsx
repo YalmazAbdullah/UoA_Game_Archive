@@ -1,4 +1,3 @@
-import * as React from "react"
 import about from "@/assets/about.svg";
 
 export function About(){

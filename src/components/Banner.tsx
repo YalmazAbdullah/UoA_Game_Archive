@@ -1,5 +1,3 @@
-import * as React from "react"
-import banner from "@/assets/banner.svg";
 import bannerLogo from "@/assets/bannerLogo.svg";
 import logo from "@/assets/logo.svg";
 
